@@ -1,0 +1,22 @@
+services:
+  db:
+    container_name: bg-app-db
+    image: pesho02/m3-db:latest
+    networks:
+      - bg-cities-net
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_ROOT_PASSWORD}'
+  front:
+    container_name: bg-app-front
+    image: pesho02/m3-web:latest
+    ports:
+      - 8080:80
+    volumes:
+      - '${PWD}/web:/var/www/html:ro'
+    networks:
+      - bg-cities-net
+    depends_on:
+      - db
+    restart: on-failure
+networks:
+  bg-cities-net:

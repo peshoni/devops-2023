@@ -3,5 +3,25 @@
 
 Containers
 open session to container : docker container exec -it <name> sh
+                            docker container attach c1
+
+
+check container directory :  ls -l /
+exit from containe ctrl + P ctrl + Q
 
 Networks
+
+
+Volumes:
+docker container run -it -v /test-vol --name c1 ubuntu /bin/bash - starts container from ubuntu image with volume
+
+
+dbMaria 
+mysql -u root -p
+set names 'utf8';
+
+compose
+
+# docker compose down
+# docker compose up --build -d
+ 
