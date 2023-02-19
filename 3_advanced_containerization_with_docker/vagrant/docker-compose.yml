@@ -1,14 +1,9 @@
+version: '3.8'
 services:
-  db:
-    container_name: bg-app-db
-    image: pesho02/m3-db:latest
-    networks:
-      - bg-cities-net
-    environment:
-      MYSQL_ROOT_PASSWORD: '${DB_ROOT_PASSWORD}'
   front:
-    container_name: bg-app-front
     image: pesho02/m3-web:latest
+    deploy:
+      replicas: 3
     ports:
       - 8080:80
     volumes:
@@ -18,5 +13,20 @@ services:
     depends_on:
       - db
     restart: on-failure
+
+  db:
+    image: pesho02/m3-db:latest
+    networks:
+      - bg-cities-net
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_ROOT_PASSWORD}'
+      # MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+    # secrets:
+    #   - db_root_password
+
+# secrets:
+#   db_root_password:
+#     external: true
+
 networks:
   bg-cities-net:

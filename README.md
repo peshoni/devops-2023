@@ -4,11 +4,15 @@ Course for DevOps in SoftUni 2023
 
 ## 3 Advanced containerization
 
+# docker image
 
-# docker voumes
+# docker container
+
+# docker volumes
 
 # docker compose
 
 # docker swarm  
+
 
 
