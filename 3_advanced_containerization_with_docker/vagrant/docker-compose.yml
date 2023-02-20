@@ -20,13 +20,5 @@ services:
       - bg-cities-net
     environment:
       MYSQL_ROOT_PASSWORD: '${DB_ROOT_PASSWORD}'
-      # MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
-    # secrets:
-    #   - db_root_password
-
-# secrets:
-#   db_root_password:
-#     external: true
-
 networks:
   bg-cities-net:
