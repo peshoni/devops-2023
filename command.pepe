@@ -24,4 +24,19 @@ compose
 
 # docker compose down
 # docker compose up --build -d
+
+
+ssh between machines
+sudo dnf install sshpass 
+sshpass -p 'vagrant' ssh vagrant@docker2
+
+# docker swarm join --token  ${sshpass -p 'vagrant' ssh vagrant@docker1 docker swarm join-token worker}  ${LEADER_IP}:2377
+# docker swarm join --token  ${sshpass -p 'vagrant' ssh vagrant@docker1 docker swarm join-token worker} -advertise-addr 192.168.99.102 192.168.99.101:2377 
+# docker swarm init --advertise-addr ${LEADER_IP} 
+# docker swarm join --token SWMTKN-1-3zq8zz3tdm1m6fvp2jobwjodudr9x704t9wb1d8j65pnz5asap-574j0i2dtzx5nuilwqdmudn1k --advertise-addr 192.168.99.102 192.168.99.101:2377 
+# docker node promote docker2.do1.lab
+# docker node promote docker3.do1.lab 
+ 
+# sshpass -p 'vagrant' ssh vagrant@docker2 docker swarm join-token worker 
+# docker swarm join-token -q worker
  
