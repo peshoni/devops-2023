@@ -1,4 +1,8 @@
 
+# add docker 
+sudo dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+sudo dnf install docker-ce docker-ce-cli containerd.io
+
 
 
 Containers
@@ -33,7 +37,7 @@ sshpass -p 'vagrant' ssh vagrant@docker2
 # docker swarm join --token  ${sshpass -p 'vagrant' ssh vagrant@docker1 docker swarm join-token worker}  ${LEADER_IP}:2377
 # docker swarm join --token  ${sshpass -p 'vagrant' ssh vagrant@docker1 docker swarm join-token worker} -advertise-addr 192.168.99.102 192.168.99.101:2377 
 # docker swarm init --advertise-addr ${LEADER_IP} 
-# docker swarm join --token SWMTKN-1-3zq8zz3tdm1m6fvp2jobwjodudr9x704t9wb1d8j65pnz5asap-574j0i2dtzx5nuilwqdmudn1k --advertise-addr 192.168.99.102 192.168.99.101:2377 
+# docker swarm join --token moken --advertise-addr 192.168.99.102 192.168.99.101:2377 
 # docker node promote docker2.do1.lab
 # docker node promote docker3.do1.lab 
  

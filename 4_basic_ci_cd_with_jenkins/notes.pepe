@@ -1,0 +1,32 @@
+-----------------------------------
+# Pull or clone check
+cd /projects
+if [ -d /projects/bgapp ]; then
+    cd bgapp
+    git pull https://github.com/peshoni/bgapp.git
+else
+    git clone https://github.com/peshoni/bgapp.git
+fi
+-----------------------------------
+# check and opt create net 
+docker network ls | grep appnet || docker network create appnet     // find and if not present, create new one
+-----------------------------------
+# build image
+cd /projects/bgapp
+docker image build -t image-web -f Dockerfile.web .
+-----------------------------------
+# Refresh: delete old one if present, and create new container
+docker container rm -f web || true            //  (if comand1 === false - execute command2)
+docker container run -d --name web --net appnet  -p 8080:80 -v /projects/bgapp/web:/var/www/html:ro image-web
+-----------------------------------
+# build image
+cd /projects/bgapp
+docker image build -t image-db -f Dockerfile.db .
+-----------------------------------
+Refresh: delete old one if present, and create new container
+docker container rm -f db || true
+docker container run -d --name db --net appnet  -e MYSQL_ROOT_PASSWORD=12345 image-db
+-----------------------------------
+
+[vagrant@jenkins ~]$ sudo mkdir -p /projects/www-static
+[vagrant@jenkins ~]$ sudo chown -R jenkins:jenkins /projects

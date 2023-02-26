@@ -12,8 +12,9 @@ echo "* Install Java 17 ..."
 sudo yum -y install java-17-openjdk
 echo "* Start Jenkins ..."
 
-sudo systemctl enable jenkins
+
 sudo systemctl start jenkins
+sudo systemctl enable jenkins
 
 echo "* Add vagrant user to jenkins group ..."
 usermod -aG jenkins vagrant
