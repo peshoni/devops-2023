@@ -1,0 +1,35 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+    
+  config.ssh.insert_key = false
+# JENKINS - master
+  config.vm.define "jenkins" do |jenkins|
+    jenkins.vm.box="shekeriev/centos-stream-9"
+    jenkins.vm.hostname = "jenkins.do1.lab"
+    jenkins.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "3072"]
+    end
+    jenkins.vm.network "private_network", ip: "192.168.99.101"
+    jenkins.vm.synced_folder "vagrant", "/vagrant" # for Dockerfiles, Docker-compose and scripts
+    jenkins.vm.network "forwarded_port", guest: 8080, host: 8080
+    jenkins.vm.provision "shell", path: "add_hosts.sh"
+    jenkins.vm.provision "shell", path: "install_jenkins.sh"
+    # jenkins.vm.provision "shell", path: "jenkins-firewall-setting.sh"
+  end
+ # DOCKER - slave 
+  config.vm.define "docker" do |docker|
+    docker.vm.box = "shekeriev/centos-stream-9"
+    docker.vm.hostname = "docker.do1.lab"
+    docker.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "3072"]
+    end
+    docker.vm.network "private_network", ip: "192.168.99.102"    
+    docker.vm.synced_folder "vagrant", "/vagrant" # for Gitea compose
+    docker.vm.provision "shell", path: "add_hosts.sh"
+    docker.vm.provision "shell", path: "install_docker.sh"
+    docker.vm.provision "shell", path: "run_gitea_container.sh" # from synced folder
+  end
+
+end

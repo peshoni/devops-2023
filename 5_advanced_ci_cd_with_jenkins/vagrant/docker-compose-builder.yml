@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  front:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    image: m3-web:latest
+    ports:
+      - 8080:80
+    volumes:
+      - '${PWD}/web:/var/www/html:ro'
+    networks:
+      - bg-cities-net
+    depends_on:
+      - db
+    restart: on-failure
+
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile.db
+    image: m3-db:latest
+    networks:
+      - bg-cities-net
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+networks:
+  bg-cities-net:

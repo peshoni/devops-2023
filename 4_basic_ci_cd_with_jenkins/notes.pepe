@@ -10,7 +10,7 @@ fi
 -----------------------------------
 # check and opt create net 
 docker network ls | grep appnet || docker network create appnet     // find and if not present, create new one
------------------------------------
+----------------------------------- 
 # build image
 cd /projects/bgapp
 docker image build -t image-web -f Dockerfile.web .
