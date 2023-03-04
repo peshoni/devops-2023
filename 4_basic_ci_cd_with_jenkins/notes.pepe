@@ -30,3 +30,5 @@ docker container run -d --name db --net appnet  -e MYSQL_ROOT_PASSWORD=12345 ima
 
 [vagrant@jenkins ~]$ sudo mkdir -p /projects/www-static
 [vagrant@jenkins ~]$ sudo chown -R jenkins:jenkins /projects
+
+
