@@ -16,9 +16,6 @@ echo "* Adjust the firewall"
 firewall-cmd --permanent --add-port=8080/tcp
 firewall-cmd --reload
 
-# git config --global --unset http.proxy
-# git config --global --unset https.proxy
-
 sudo useradd jenkins
 #Add the jenkins user to the docker group
 sudo usermod -aG docker jenkins

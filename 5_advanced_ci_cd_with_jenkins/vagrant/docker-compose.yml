@@ -1,18 +1,18 @@
 version: '3.8'
 services:
-  front:
+  bg-app-front:
     image: pesho02/m3-web:latest
     ports:
-      - 8080:80
+      - 80:80
     volumes:
-      - '${PWD}/web:/var/www/html:ro'
+      - '${PWD}/bg-app/web:/var/www/html:ro'
     networks:
       - bg-cities-net
     depends_on:
-      - db
+      - bg-app-db
     restart: on-failure
 
-  db:
+  bg-app-db:
     image: pesho02/m3-db:latest
     networks:
       - bg-cities-net

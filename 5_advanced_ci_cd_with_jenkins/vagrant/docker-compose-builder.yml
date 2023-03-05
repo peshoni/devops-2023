@@ -1,25 +1,25 @@
 version: '3.8'
 services:
-  front:
+  bg-app-front:
     build:
       context: .
       dockerfile: Dockerfile.web
-    image: m3-web:latest
+    image: m3-web
     ports:
       - 8080:80
     volumes:
-      - '${PWD}/web:/var/www/html:ro'
+      - '${PWD}/bg-app/web:/var/www/html:ro'
     networks:
       - bg-cities-net
     depends_on:
-      - db
+      - bg-app-db
     restart: on-failure
 
-  db:
+  bg-app-db:
     build:
       context: .
       dockerfile: Dockerfile.db
-    image: m3-db:latest
+    image: m3-db
     networks:
       - bg-cities-net
     environment:
