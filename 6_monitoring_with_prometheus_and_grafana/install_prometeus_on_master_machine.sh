@@ -8,6 +8,7 @@ rm prometheus-2.42.0.linux-amd64.tar.gz
 echo "* .gz was deleted.."
 # replace default .yml file with custom from synced Vagrant folder
 sudo cp -f /vagrant/prometheus.yml ./prometheus-2.42.0.linux-amd64/
+sudo cp -f /vagrant/application.json ./prometheus-2.42.0.linux-amd64/
 echo "* prometheus.yml is replaced.."
 
 cd prometheus-2.42.0.linux-amd64

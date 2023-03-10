@@ -1,0 +1,14 @@
+[
+  {
+    "targets": ["node2:8081"],
+    "labels": {
+      "role": "container"
+    }
+  },
+  {
+    "targets": ["node3:8081"],
+    "labels": {
+      "role": "cont"
+    }
+  }
+]

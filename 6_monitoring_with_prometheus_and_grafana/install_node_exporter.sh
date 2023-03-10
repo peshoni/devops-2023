@@ -9,7 +9,6 @@ echo "* .gz was deleted.."
 
 cd node_exporter-1.5.0.linux-amd64/
 
-# ./node_exporter
 ./node_exporter &>/tmp/node-exporter.log &
 
 docker container run -d --name worker1 -p 8081:8080 shekeriev/goprom
