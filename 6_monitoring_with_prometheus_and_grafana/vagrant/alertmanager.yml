@@ -1,0 +1,12 @@
+global:
+  resolve_timeout: 1m
+  slack_api_url: 'https://hooks.slack.com/services/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'
+
+route:
+  receiver: 'slack-notifications'
+
+receivers:
+- name: 'slack-notifications'
+  slack_configs:
+  - channel: '#devops-course'
+    send_resolved: true

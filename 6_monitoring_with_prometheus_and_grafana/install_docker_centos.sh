@@ -18,4 +18,9 @@ firewall-cmd --add-port 8081/tcp --permanent
 firewall-cmd --add-port 8082/tcp --permanent
 firewall-cmd --add-port 9090/tcp --permanent
 firewall-cmd --add-port 9100/tcp --permanent
+firewall-cmd --add-port 9323/tcp --permanent
 firewall-cmd --reload
+
+sudo cp -f /vagrant/daemon.json /etc/docker/
+sudo systemctl daemon-reload
+sudo systemctl restart docker

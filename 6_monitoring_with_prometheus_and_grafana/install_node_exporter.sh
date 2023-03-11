@@ -12,5 +12,4 @@ cd node_exporter-1.5.0.linux-amd64/
 ./node_exporter &>/tmp/node-exporter.log &
 
 docker container run -d --name worker1 -p 8081:8080 shekeriev/goprom
-
-# /vagrant/goprom/runner.sh http://192.168.99.103:8081 &> /tmp/runner8081.log &
+docker container run -d --name worker2 -p 8082:8080 shekeriev/goprom

@@ -15,7 +15,9 @@ Vagrant.configure(2) do |config|
     node1.vm.synced_folder "vagrant", "/vagrant"
 	  node1.vm.provision "shell", path: "add_hosts.sh"
     node1.vm.provision "shell", path: "install_docker_debian.sh"
-    node1.vm.provision "shell", path: "install_prometeus_on_master_machine.sh"    
+    node1.vm.provision "shell", path: "install_prometeus_on_master_machine.sh"
+    node1.vm.provision "shell", path: "install_prometeus_alert_manager.sh"
+    node1.vm.provision "shell", path: "install_grafana.sh"     
   end
 
   config.vm.define "node2" do |node2|
@@ -29,6 +31,7 @@ Vagrant.configure(2) do |config|
 	  node2.vm.provision "shell", path: "add_hosts.sh"
     node2.vm.provision "shell", path: "install_docker_debian.sh"
     node2.vm.provision "shell", path: "install_node_exporter.sh"
+    node2.vm.provision "shell", path: "run_runner_on_first_node.sh" 
   end
   
   config.vm.define "node3" do |node3|
@@ -42,6 +45,7 @@ Vagrant.configure(2) do |config|
 	  node3.vm.provision "shell", path: "add_hosts.sh"
     node3.vm.provision "shell", path: "install_docker_centos.sh"
     node3.vm.provision "shell", path: "install_node_exporter.sh"
+    node3.vm.provision "shell", path: "run_runner_on_second_node.sh" 
   end
 
 end
