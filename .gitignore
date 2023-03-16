@@ -1,3 +1,4 @@
 desktop.ini
 .vagrant
 .env
+7_monitoring_with_elastick_stack/elk-on-docker/data

@@ -11,7 +11,7 @@ open session to container : docker container exec -it <name> sh
 
 
 check container directory :  ls -l /
-exit from containe ctrl + P ctrl + Q
+exit(detach) from container ctrl + P ctrl + Q
 
 Networks
 
