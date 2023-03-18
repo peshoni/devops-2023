@@ -18,7 +18,7 @@ echo "* Start Docker service"
 systemctl enable --now docker
 
 echo "* Add vagrant user to docker group"
-usermod -aG docker vagrant
+sudo usermod -aG docker vagrant
 
 echo "* Adjust firewall rules"
 firewall-cmd --add-port 8080/tcp --permanent

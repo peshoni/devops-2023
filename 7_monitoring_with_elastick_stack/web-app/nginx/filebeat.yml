@@ -1,0 +1,17 @@
+filebeat:
+  inputs:
+    - type: filestream
+      enabled: true
+      paths:
+        - /var/log/nginx/access.log
+    - type: filestream
+      enabled: true
+      paths:
+        - /var/log/nginx/error.log
+
+output:
+ logstash:
+    enabled: true
+    hosts:
+      - 192.168.99.104:5000
+    timeout: 15
