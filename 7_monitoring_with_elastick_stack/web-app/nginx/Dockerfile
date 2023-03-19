@@ -20,9 +20,9 @@ RUN curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${
 
 ENV METRICBEAT_VERSION 8.6.2
 
-RUN curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-${FILEBEAT_VERSION}-amd64.deb \
-    && dpkg -i metricbeat-${FILEBEAT_VERSION}-amd64.deb \
-    && rm metricbeat-${FILEBEAT_VERSION}-amd64.deb
+RUN curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-${METRICBEAT_VERSION}-amd64.deb \
+    && dpkg -i metricbeat-${METRICBEAT_VERSION}-amd64.deb \
+    && rm metricbeat-${METRICBEAT_VERSION}-amd64.deb
 
 ###############################################################################
 #                                CONFIGURATION
