@@ -6,8 +6,12 @@ sudo dnf install docker-ce docker-ce-cli containerd.io
 
 
 Containers
-open session to container : docker container exec -it <name> sh
+open session to container : filebeat 
                             docker container attach c1
+
+Install vim in container
+apt-get update
+apt-get install vim
 
 
 check container directory :  ls -l /

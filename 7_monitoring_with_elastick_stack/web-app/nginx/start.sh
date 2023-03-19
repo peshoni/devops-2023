@@ -20,6 +20,19 @@ filebeat setup --index-management -E output.logstash.enabled=false -E 'output.el
 # Start the FileBeat component
 /etc/init.d/filebeat start
 
+sudo filebeat modules enable system
+
+# Install the index template
+metricbeat setup --index-management -E output.logstash.enabled=false -E 'output.elasticsearch.hosts=["192.168.99.104:9200"]'
+
+sudo systemctl enable metricbeat
+
+sudo metricbeat modules enable system
+sudo metricbeat modules enable docker
+
+# Start the Metricbeat component
+/etc/init.d/metricbeat start
+
 # Start NGINX
 nginx
 

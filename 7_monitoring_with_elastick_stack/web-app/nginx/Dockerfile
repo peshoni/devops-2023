@@ -16,6 +16,13 @@ RUN curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${
     && dpkg -i filebeat-${FILEBEAT_VERSION}-amd64.deb \
     && rm filebeat-${FILEBEAT_VERSION}-amd64.deb
 
+### install Metricbeat
+
+ENV METRICBEAT_VERSION 8.6.2
+
+RUN curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-${FILEBEAT_VERSION}-amd64.deb \
+    && dpkg -i metricbeat-${FILEBEAT_VERSION}-amd64.deb \
+    && rm metricbeat-${FILEBEAT_VERSION}-amd64.deb
 
 ###############################################################################
 #                                CONFIGURATION
@@ -32,6 +39,12 @@ RUN rm /var/log/nginx/access.log /var/log/nginx/error.log
 # config file
 ADD filebeat.yml /etc/filebeat/filebeat.yml
 RUN chmod go-w /etc/filebeat/filebeat.yml
+
+### configure Metricbeat
+
+# config file
+ADD metricbeat.yml /etc/metricbeat/metricbeat.yml
+RUN chmod go-w /etc/metricbeat/metricbeat.yml
 
 ###############################################################################
 #                                    DATA
