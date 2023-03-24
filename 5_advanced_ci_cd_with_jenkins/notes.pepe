@@ -4,3 +4,24 @@ docker compose -f docker-compose-builder.yml down
 
 docker compose -f docker-compose-gitea.yml down
 docker compose -f docker-compose-gitea.yml up --build -d
+
+
+
+list users 
+$ cat /etc/passwd
+
+$ less /etc/passwd
+
+$ more /etc/passwd
+
+
+
+node exporter metrics:
+https://acloudxpert.com/working-with-memory-metrics-from-node-exporter/
+
+RAM:
+node_memory_MemTotal_bytes
+node_memory_MemFree_bytes
+node_memory_MemAvailable_bytes
+node_memory_Buffers_bytes
+node_memory_Cached_bytes
