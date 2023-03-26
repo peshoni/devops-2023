@@ -1,0 +1,9 @@
+201
+202
+203
+
+JENKINS:    pipelines.do1.exam     192.168.99.201
+DOCKER:     containers.do1.exam    192.168.99.202
+PROMETHEUS: monitoring.do1.exam    192.168.99.203
+
+repo: https://github.com/shekeriev/fun-facts

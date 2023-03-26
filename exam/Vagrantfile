@@ -1,0 +1,88 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+ 
+# region CONFIG #
+
+# Common vars
+BOX_BASE = "shekeriev/centos-stream-9"
+VM_DOMAIN = ".do1.exam"
+
+# Pipeline machine
+VM_JENKINS_LAST_OCTET = "201"
+VM_JENKINS_PORT = 8080 # available on localhost
+VM_JENKINS_HOST = "pipelines"
+
+# Docker machine
+VM_DOCKER_LAST_OCTET = "202"
+VM_DOCKER_PORT = 8081 # available on localhost
+VM_DOCKER_HOST = "containers"
+
+# Monitoring machine
+VM_PROMETHEUS_LAST_OCTET = "203"
+VM_PROMETHEUS_PORT = 8082 # available on localhost
+VM_PROMETHEUS_HOST = "monitoring"
+
+# endregion CONFIG #
+
+Vagrant.configure(2) do |config|
+    
+  config.ssh.insert_key = false
+
+  # Jenkins + Node exporter
+  config.vm.define "jenkins" do |jenkins|
+    jenkins.vm.box = BOX_BASE
+    jenkins.vm.hostname = VM_JENKINS_HOST + VM_DOMAIN
+
+    jenkins.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "4096"]
+    end
+
+    jenkins.vm.network "private_network", ip: "192.168.99." + VM_JENKINS_LAST_OCTET
+    jenkins.vm.network "forwarded_port", guest: 8080, host: VM_JENKINS_PORT
+
+	  jenkins.vm.provision "shell", path: "add_hosts.sh"
+    jenkins.vm.provision "shell", path: "install_jenkins.sh"
+    jenkins.vm.provision "shell", path: "install_node_exporter.sh"
+    
+  end
+
+  # Docker + Gitea + Node exporter
+  config.vm.define "docker" do |docker|
+    docker.vm.box = BOX_BASE
+    docker.vm.hostname = VM_DOCKER_HOST + VM_DOMAIN
+
+    docker.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "3072"]
+    end
+
+    docker.vm.network "private_network", ip: "192.168.99." + VM_DOCKER_LAST_OCTET
+    docker.vm.network "forwarded_port", guest: 8080, host: VM_DOCKER_PORT
+
+    docker.vm.provision "shell", path: "add_hosts.sh" 
+    docker.vm.provision "shell", path: "install_docker_centos.sh"
+    docker.vm.provision "shell", path: "run_gitea_container.sh"    
+    docker.vm.provision "shell", path: "install_node_exporter.sh"
+
+    docker.vm.synced_folder "docker", "/vagrant" 
+  end
+
+  # Monitoring machine : Prometheus + Grafana
+  config.vm.define "monitoring" do |monitoring|
+    monitoring.vm.box = BOX_BASE
+    monitoring.vm.hostname = VM_PROMETHEUS_HOST + VM_DOMAIN
+
+    monitoring.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "3072"]
+    end
+
+    monitoring.vm.network "private_network", ip: "192.168.99." + VM_PROMETHEUS_LAST_OCTET
+    monitoring.vm.network "forwarded_port", guest: 3000, host: VM_PROMETHEUS_PORT
+
+	  monitoring.vm.provision "shell", path: "add_hosts.sh" 
+    monitoring.vm.provision "shell", path: "install_and_setup_docker.sh" 
+    monitoring.vm.provision "shell", path: "run_prometheus_and_grafana.sh"
+
+    monitoring.vm.synced_folder "monitoring", "/vagrant"
+  end 
+
+end

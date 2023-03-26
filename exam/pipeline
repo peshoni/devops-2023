@@ -1,0 +1,53 @@
+pipeline 
+{
+    agent 
+    {
+        label 'docker-node'
+    }
+    stages 
+    {
+        stage('Clone') 
+        {
+            steps 
+            {
+                git branch: 'main',url: 'http://192.168.99.202:3000/pesho02/exam'
+            }
+        }
+        stage('Prepare')
+        {
+            steps
+            {
+                sh 'docker network ls | grep exam-net || docker network create exam-net'
+            }
+        }
+        stage('Build')
+        {
+            steps
+            {
+                sh 'cd /home/jenkins/workspace/exam/exam/client && docker image build -t img-client .'
+                sh 'cd /home/jenkins/workspace/exam/exam/generator && docker image build -t img-generator .'
+                sh 'cd /home/jenkins/workspace/exam/exam/storage && docker image build -t img-storage .'                
+            }
+        }
+        stage('Run')
+        {
+            steps
+            {
+                sh 'docker container rm -f dob-storage || true'
+                sh 'docker container run -d --name dob-storage -e MYSQL_ROOT_PASSWORD=ExamPa$$w0rd --net exam-net img-storage'
+                sh 'docker container rm -f dob-producer || true'
+                sh 'docker container run -d --name dob-producer --net exam-net img-generator'
+                sh 'docker container rm -f dob-consumer || true'
+                sh 'docker container run -d --name dob-consumer --net exam-net -p 8080:5000 img-client'
+            }
+        }
+
+        stage('Clean')
+        {
+            steps
+            {
+                cleanWs()
+            }
+        }
+    }
+}

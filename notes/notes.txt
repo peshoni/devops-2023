@@ -1,0 +1,48 @@
+1 инсталирах Jenkins + Node Exporter 
+2 Проверих, копирах паролата от конзолата и я поставих в GUI на Jenkins - 20d8bfebf83b425098f60b94578a5f97
+
+[vagrant@vm101 /]$ cd etc
+[vagrant@vm101 etc]$ sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+20d8bfebf83b425098f60b94578a5f97 
+
+jenkins:gui: admin admin
+
+- Инсталирах предложените от Jenkins плъгини
+- Инсталирах SSH agent
+- Инсталирах Gitea plugin
+
+----->>>>>>>>>>>>>>>>>>>>>>>>>>>
+#[vagrant@vm101 ~]$ sudo vi /etc/passwd
+#jenkins:x:986:986:Jenkins Automation Server:/var/lib/jenkins:/bin/bash
+#ctrl + c :wq
+
+[vagrant@vm101 ~]$ sudo passwd jenkins  ---- password1
+# And that the shell is set to /bin/bash. For example, by executing
+[vagrant@vm101 ~]$ sudo usermod -s /bin/bash jenkins
+
+sudo usermod -aG vagrant jenkins
+--------------------
+sudo passwd jenkins
+sudo usermod -s /bin/bash jenkins
+su - jenkins
+
+ssh-copy-id jenkins@jenkins.do1.lab
+ssh-copy-id jenkins@docker.do1.lab
+-------------------------------
+
+gitea pesho02 / pesho02 
+
+
+node exporter metrics:
+https://acloudxpert.com/working-with-memory-metrics-from-node-exporter/
+
+RAM:
+node_memory_MemTotal_bytes
+node_memory_MemFree_bytes
+node_memory_MemAvailable_bytes   ---- RAM
+node_memory_Buffers_bytes
+node_memory_Cached_bytes
+
+
+sum by(instance) (node_memory_MemAvailable_bytes)   ---- Available memory
+
