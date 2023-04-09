@@ -4,3 +4,8 @@ desktop.ini
 7_monitoring_with_elastick_stack/elk-on-docker/data
 1_7_monitoring_with_elastick_stack/elk-on-docker/*
 1_6_monitoring_with_prometheus_and_grafana/vagrant/*
+
+terraform.*
+.terraform.*
+*\.terraform
+virtualbox.box

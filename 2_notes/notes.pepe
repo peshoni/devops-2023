@@ -1,0 +1,29 @@
+install terraform from https://developer.hashicorp.com/terraform/downloads
+
+unzip
+add path to variable
+check vaersion and commands:
+terraform version
+terraform validate
+tarraform plan
+terraform apply
+terraform destroy
+
+
+terraform apply
+ 
+ssh vagrant@<ip-address>
+
+terraform plan -out docker.plan
+
+M1 Introduction:
+###########################################
+docker container exec -it bg-app-web sh
+docker container exec -it bg-app-db sh
+###########################################
+terraform apply -replace="docker_container.con-bgapp-web[0]"
+terraform apply -replace="docker_container.con-bgapp-db[0]"
+###########################################
+docker container run -d --name db --net app-network  -e MYSQL_ROOT_PASSWORD=12345 shekeriev/bgapp-db
+docker container run -d --name web --net app-network -p 80:80 -v $(pwd)/web:/var/www/html shekeriev/bgapp-web 
+###########################################

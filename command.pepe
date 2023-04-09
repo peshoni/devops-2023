@@ -28,6 +28,13 @@ dbMaria
 mysql -u root -p
 set names 'utf8';
 
+show databases; use bulgaria; show tables; select * from cities;
+use bulgaria;
+show tables;
+select * from cities;
+
+
+
 compose
 
 # docker compose down

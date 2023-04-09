@@ -1,0 +1,27 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VM_LAST_OCTET = "100"
+VM_PORT_1 = 80
+VM_PORT_2 = 8080 # available on localhost
+
+Vagrant.configure("2") do |config|
+
+    config.ssh.insert_key = false
+
+    config.vm.define "docker" do |docker|
+     
+      docker.vm.box="shekeriev/debian-11"
+      docker.vm.hostname = "docker"
+      docker.vm.network "private_network", ip: "192.168.99." + VM_LAST_OCTET
+      docker.vm.network "forwarded_port", guest: 80, host: VM_PORT_1, auto_correct: true
+      docker.vm.network "forwarded_port", guest: 8080, host: VM_PORT_2, auto_correct: true
+      docker.vm.provider :virtualbox do |vb|
+        vb.name="debian_11_with_docker"
+        vb.customize ["modifyvm", :id, "--memory", "2048"]
+      end
+      docker.vm.provision "shell", path: "install_docker_debian.sh"
+    end
+  
+end
+  

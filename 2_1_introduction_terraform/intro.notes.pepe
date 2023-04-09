@@ -1,0 +1,5 @@
+terraform apply
+ 
+ssh vagrant@<ip-address>
+
+terraform plan -out docker.plan
