@@ -2,4 +2,16 @@ terraform apply
  
 ssh vagrant@<ip-address>
 
+
+go to folder with .tf files
+
 terraform plan -out docker.plan
+
+terraform plan
+terraform apply 
+yes
+
+terraform destroy 
+yes
+
+solution:
