@@ -1,0 +1,40 @@
+###################################
+Ansible
+
+ansible --version
+rpm -qc ansible-core  
+
+
+
+ansible 192.168.99.100 -a "hostname" -u vagrant -k
+cat /etc/ansible/hosts
+
+ansible all -m command -a "df -h"
+ansible all -m shell -a "df -h"
+
+ansible all -m shell -a 'echo $HOSTNAME'
+
+###################################
+
+Creat and run script on ansible machine
+vi local_script.sh
+
+ansible all -m script -a "local_script.sh"
+
+###################################
+inventory
+
+ansible ans -i inventory -a "hostname"
+ansible all -i inventory -a "hostname"
+
+
+###################################
+https://www.linkedin.com/pulse/launch-configure-docker-container-using-shubham-rasal/
+Task 1
+ansible-playbook docker-config.yml
+
+
+###################################
+vi
+
+dG - delete all lines in file

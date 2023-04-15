@@ -1,0 +1,39 @@
+---
+- hosts: webservers
+  become: true
+  # roles:
+  #   - web-servers
+
+  tasks:
+    - name: Install PHP
+      dnf: name=php state=latest
+
+    - name: Install Apache HTTP Server
+      dnf: name=httpd state=present
+
+    - name: Copy new web-content
+      copy: src=web/ dest=/var/www/html/
+
+    - name: Start Apache HTTP Server and Enable it
+      service: name=httpd state=started enabled=true
+
+    - name: Allow HTTP service in the firewall
+      firewalld: service=http state=enabled permanent=yes immediate=yes
+
+- hosts: dbservers
+  become: true
+
+  tasks:
+    - name: Install MariaDB Server
+      apt: name=mariadb-server state=present
+
+    - name: Start and enable MariaDB
+      service: name=mariadb state=started enabled=true
+
+    - name: create a new database
+      shell: sudo mysql -u root < /vagrant/db/db_setup.sql
+      register: cres
+      ignore_errors: true
+
+    - name: Show the result
+      debug: var=cres

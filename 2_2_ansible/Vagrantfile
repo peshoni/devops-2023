@@ -9,12 +9,12 @@ Vagrant.configure(2) do |config|
       ans.vm.box = "shekeriev/centos-stream-9"
       ans.vm.hostname = "ans.do2.lab"
       ans.vm.network "private_network", ip: "192.168.99.99"
-
+      ans.vm.network "forwarded_port", guest: 80, host: 8, auto_correct: true
       ans.vm.provider :virtualbox do |vb|
-        vb.name="centos-11-with-ansible"
+        vb.name="2_2_centos-11-ansible"
         vb.customize ["modifyvm", :id, "--memory", "2048"]
       end
-      # ans.vm.synced_folder "vagrant", "/vagrant"
+      ans.vm.synced_folder "vagrant", "/vagrant"
       ans.vm.provision "shell", path: "add_hosts.sh"
       ans.vm.provision "shell", path: "install_ansible_centos.sh" 
      
@@ -28,12 +28,11 @@ Vagrant.configure(2) do |config|
       web.vm.network "forwarded_port", guest: 80, host: 8080
 
       web.vm.provider :virtualbox do |vb|
-        vb.name="centos-9-with-docker"
+        vb.name="2_2_centos-9"
         vb.customize ["modifyvm", :id, "--memory", "2048"]
       end
 
       web.vm.provision "shell", path: "add_hosts.sh"
-      web.vm.provision "shell", path: "install_docker_centos.sh"
     end 
     
     config.vm.define "db" do |db|
@@ -43,12 +42,11 @@ Vagrant.configure(2) do |config|
       db.vm.synced_folder "app_db", "/vagrant"
 
       db.vm.provider :virtualbox do |vb|
-        vb.name="centos-9-with-docker"
+        vb.name="2_2_debian-11"
         vb.customize ["modifyvm", :id, "--memory", "2048"]
       end
 
       db.vm.provision "shell", path: "add_hosts.sh"
-      db.vm.provision "shell", path: "install_docker_debian.sh" 
     end
     
   end

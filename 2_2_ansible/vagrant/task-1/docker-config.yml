@@ -1,0 +1,39 @@
+---
+- hosts: localhost
+  become: true
+  tasks:
+    - debug:
+        var: ansible_os_family
+
+    - name: 'Create yum repo for docker'
+      yum_repository:
+        name: docker-repo
+        description: 'repo for docker'
+        baseurl: 'https://download.docker.com/linux/centos/9/x86_64/stable/'
+        enabled: yes
+        gpgcheck: no
+      when: ansible_os_family == "RedHat"
+
+    - name: 'Install docker'
+      package:
+        name: 'docker-ce-20.10.24-3.el9.x86_64'
+        state: present
+
+    - name: 'Install pip'
+      package:
+        name: 'python3-pip'
+        state: present
+
+    - name: 'Start docker service'
+      service:
+        name: 'docker'
+        state: 'started'
+
+    - name: 'Adjust users'
+      shell: usermod -aG docker vagrant
+
+    # Run nginx container
+    - name: 'remove container mynginx if any'
+      shell: docker container rm mynginx -f || true
+    - name: 'Run nginx'
+      shell: docker run --name mynginx -p 80:80 -d nginx
