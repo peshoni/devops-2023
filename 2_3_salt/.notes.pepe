@@ -1,0 +1,38 @@
+
+#################################
+Salt:ssh
+#################################
+redhat
+
+sudo vi /etc/salt/roster
+insert:
+web1:
+	host: 192.168.99.101
+	user: vagrant
+	passwd: vagrant
+	sudo: True
+:wq
+
+sudo cat /etc/salt/roster
+sudo salt-ssh web1 test.ping
+sudo salt-ssh -i '*' test.ping
+
+
+tree  /etc/salt/
+#available or known nodes with
+sudo salt-ssh -H
+sudo salt-ssh '*' cmd.run 'hostname'
+#limitation
+sudo salt-ssh --max-procs=1 '*' cmd.run 'hostname'
+sudo salt-ssh '*' cmd.run 'uname -a'
+sudo salt-ssh '*' cmd.run 'uptime'
+sudo salt-ssh '*' cmd.run 'df -h'
+
+#################################
+salt: Master + Minions
+#################################
+
+wget -O bootstrap-salt.sh https://bootstrap.saltstack.com
+
+#options: 
+sh bootstrap-salt.sh -h
