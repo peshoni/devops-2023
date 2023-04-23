@@ -11,7 +11,32 @@ web1:
 	user: vagrant
 	passwd: vagrant
 	sudo: True
+web2:
+	host: 192.168.99.102
+	user: vagrant
+	passwd: vagrant
+	sudo: True
+
+add more
+db1:
+   host: 192.168.99.103
+   user: vagrant
+   passwd: vagrant
+   sudo: True
+db2:
+   host: 192.168.99.104
+   user: vagrant
+   passwd: vagrant
+   sudo: True
 :wq
+
+	
+sudo cat /etc/salt/roster 
+sudo salt-ssh web1 test.ping
+sudo salt-ssh -i '*' test.ping
+
+
+
 
 sudo cat /etc/salt/roster
 sudo salt-ssh web1 test.ping
@@ -32,7 +57,119 @@ sudo salt-ssh '*' cmd.run 'df -h'
 salt: Master + Minions
 #################################
 
-wget -O bootstrap-salt.sh https://bootstrap.saltstack.com
-
-#options: 
+wget -O bootstrap-salt.sh stable https://bootstrap.saltstack.com
+#We can check the available options with
 sh bootstrap-salt.sh -h
+#Install the latest stable version – just the master (-M), without the minion (-N) part, do not start the daemons (-X):
+sudo sh bootstrap-salt.sh   -M -N -X
+Now, we must open the firewall ports (if a firewall is present and active)
+sudo firewall-cmd --permanent --add-port=4505-4506/tcp
+sudo firewall-cmd --reload
+It is time to enable, start the Salt master service, and check if everything is okay
+sudo systemctl enable salt-master
+sudo systemctl start salt-master
+systemctl status salt-master
+
+
+ 
+setup minions: 
+
+sudo systemctl restart salt-minion
+
+sudo systemctl restart salt-minion
+systemctl status salt-minion
+
+
+sudo salt-key -L
+
+And accept all unauthorized keys
+sudo salt-key -A
+
+sudo salt '*' test.ping
+sudo salt -G 'os_family:RedHat' test.ping
+sudo salt -G 'os_family:Debian' test.ping
+
+###################################################################
+after 
+[vagrant@server ~]$ sudo cat /srv/salt/test-state.sls
+install_cowsay_paskage:
+  pkg.installed:
+    - name: cowsay
+
+sudo salt '*' state.apply test-state test=True
+###################################################################
+
+
+homework commands:
+Task 1
+this will work with roster file!!
+sudo salt-ssh 'docker' cmd.run 'docker container rm mynginx -f || true'
+sudo salt-ssh 'docker' cmd.run 'docker run --name mynginx -p 80:80 -d nginx'
+
+Task 1
+
+Task 2
+WEB 
+
+
+sudo salt-ssh 'web' cmd.run 'vagrant/web.sh'
+
+salt-cp 'web' SOURCE [SOURCE2 SOURCE3 ...] DEST
+salt-cp 'web' /vagrant/test.txt /test.txt
+DB 
+
+
+sudo cp /etc/salt/master /vagrant
+
+
+
+
+#copy master file into etc/salt 
+
+sudo cp /vagrant/master /etc/salt/master
+sudo systemctl restart salt-master
+
+# content of master:
+user: salt
+
+file_roots:
+  base:
+    - /srv/salt
+
+
+STATES: 
+sudo rm -rf /srv/salt/* ; sudo cp -fR /vagrant/srv/* /srv/
+sudo salt '*' state.apply test=True
+
+-------------------------
+sudo cp -fR /vagrant/srv/* /srv/
+
+sudo salt '*' state.apply test=True
+
+
+ 
+      cp /vagrant/* /var/www/html
+
+set.index: 
+  file.managed: 
+    - name: /var/www/html/index.html
+    - contents: '<h1>Hello Salt World!</h1><br /><hr /><h5>Running on {{ grains['os_family'] }}</h5>' 
+    - require: 
+      - pkg: apache2 
+
+copy.web.content:
+  file.recurse:
+    - name: salt://var/www/html/
+    - dir_mode: 2775
+    - file_mode: '0644'
+    - source: salt://vagrant/web/  
+    - include_empty: True
+    - require: 
+      - pkg: apache2     
+
+  file.recurse:
+    - name: "/vagrant/var/www/html/"
+    - source:  salt://home/vagrant/web
+    - makedirs: True
+    - replace: True
+    - clean: True       
