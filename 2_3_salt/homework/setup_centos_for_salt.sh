@@ -19,6 +19,8 @@ sudo yum -y install salt-master
 sudo firewall-cmd --permanent --add-port=4505-4506/tcp
 sudo firewall-cmd --reload
 
+sudo cp -f /vagrant/roster /etc/salt/roster
+
 # It is time to enable, start the Salt master service, and check if everything is okay
 sudo systemctl enable salt-master
 sudo systemctl start salt-master

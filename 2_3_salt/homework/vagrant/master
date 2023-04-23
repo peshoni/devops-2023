@@ -1,0 +1,5 @@
+user: salt
+
+file_roots:
+  base:
+    - /srv/salt

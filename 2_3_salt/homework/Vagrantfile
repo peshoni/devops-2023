@@ -1,0 +1,89 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.ssh.insert_key = false
+
+  # Salt Server - CentOS 9.x
+  config.vm.define "server" do |server|
+    server.vm.box = "shekeriev/centos-stream-9"
+    server.vm.hostname = "server"
+    server.vm.network "private_network", ip: "192.168.99.100"
+
+    server.vm.provision "shell", path: "add_hosts.sh"
+	  server.vm.provision "shell", path: "add_packages_centos.sh"
+    server.vm.provision "shell", path: "setup_centos_for_salt.sh"
+
+    server.vm.synced_folder "vagrant", "/vagrant"
+
+    server.vm.provider "virtualbox" do |v|
+      v.name="salt_master"
+      v.gui = false
+      v.memory = 2048
+      v.cpus = 2
+    end
+  end
+  
+  # Salt Client #1 - CentOS 9.x for Docker
+  config.vm.define "docker" do |docker|
+    docker.vm.box = "shekeriev/centos-stream-9"
+    docker.vm.hostname = "docker"
+    docker.vm.network "private_network", ip: "192.168.99.101"
+
+    docker.vm.network "forwarded_port", guest: 80, host: 8080
+
+    docker.vm.provision "shell", path: "add_hosts.sh"
+	  docker.vm.provision "shell", path: "add_packages_centos.sh"
+    docker.vm.provision "shell", path: "docker_setup.sh"
+
+    docker.vm.provider "virtualbox" do |v|
+      v.name="salt_minion_docker"
+      v.gui = false
+      v.memory = 2048
+      v.cpus = 2
+    end
+  end
+
+  # Salt Client #2 - Debian 11 for WEB
+  config.vm.define "web" do |web|
+    web.vm.box = "shekeriev/debian-11"
+    web.vm.hostname = "client-web-2"
+    web.vm.network "private_network", ip: "192.168.99.102"
+
+    web.vm.network "forwarded_port", guest: 80, host: 8081
+
+    web.vm.provision "shell", path: "add_hosts.sh"
+	  web.vm.provision "shell", path: "add_packages_debian.sh"
+    web.vm.provision "shell", path: "install_minion_debian.sh"
+
+    web.vm.synced_folder "web", "/vagrant"
+
+    web.vm.provider "virtualbox" do |v|
+      v.name="salt_minion_web"
+      v.gui = false
+      v.memory = 1024
+      v.cpus = 2
+    end
+  end
+  
+  # Salt Client #3 - CentOS 9.x for DB
+  config.vm.define "db" do |db|
+    db.vm.box = "shekeriev/centos-stream-9"
+    db.vm.hostname = "client-db-1"
+    db.vm.network "private_network", ip: "192.168.99.103" 
+
+    db.vm.provision "shell", path: "add_hosts.sh"
+	  db.vm.provision "shell", path: "add_packages_centos.sh"
+    db.vm.provision "shell", path: "install_minion_centos.sh"
+
+    db.vm.synced_folder "db", "/vagrant"
+
+    db.vm.provider "virtualbox" do |v|
+      v.name="salt_minion_db"
+      v.gui = false
+      v.memory = 1024
+      v.cpus = 2
+    end
+  end
+  
+end
