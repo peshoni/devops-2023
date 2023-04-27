@@ -1,0 +1,41 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.ssh.insert_key = false
+
+  # Chef Server - CentOS Stream 9
+  config.vm.define "server" do |server|
+    server.vm.box = "shekeriev/centos-stream-9"
+    server.vm.hostname = "chef-server"
+    server.vm.network "private_network", ip: "192.168.99.101"
+    server.vm.provision "shell", path: "add_hosts.sh" 
+    server.vm.provision "shell", path: "chef_server_centos.sh"
+
+    server.vm.synced_folder "vagrant", "/vagrant"
+
+    server.vm.provider "virtualbox" do |v|
+      v.name = "the Chef"
+      v.gui = false
+      v.memory = 4096      
+      v.cpus = 1
+    end
+  end
+  
+  # Chef Client #1 - CentOS Stream 9
+  config.vm.define "client" do |client|
+    client.vm.box = "shekeriev/centos-stream-9"
+    client.vm.hostname = "chef-client-1"
+    client.vm.network "private_network", ip: "192.168.99.102"
+    client.vm.provision "shell", path: "add_hosts.sh" 
+
+    client.vm.synced_folder "vagrant", "/vagrant"    
+
+    client.vm.provider "virtualbox" do |v|
+      v.gui = false
+      v.memory = 2048
+      v.cpus = 1
+    end
+  end 
+  
+end
