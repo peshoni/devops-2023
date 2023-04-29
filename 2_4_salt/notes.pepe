@@ -1,0 +1,42 @@
+chef server
+# Manual operations after chef_server_centos.
+
+sudo chef-server-ctl reconfigure 
+
+# Create administrator user
+sudo chef-server-ctl user-create chefadmin Chef Admin chefadmin@do2.lab 'Password1' --filename /home/vagrant/chefadmin.pem
+
+# Create an organization
+sudo chef-server-ctl org-create demo-org 'Demo Org.' --association_user chefadmin --filename /home/vagrant/demoorg-validator.pem
+
+
+---sudo firewall-cmd --add-port=80/tcp --permanent 
+---sudo firewall-cmd --add-port=443/tcp --permanent 
+---sudo firewall-cmd --reload
+
+
+# To install the web management console, execute
+ 
+sudo chef-server-ctl install chef-manage
+# Then reconfigure the server with
+sudo chef-server-ctl reconfigure
+# And then the configure the management tools with
+sudo chef-manage-ctl reconfigure
+# Now, we can open a browser tab and navigate to https://192.168.99.102:8080
+
+----------------------------------------
+workstation
+which ruby
+echo 'eval "$(chef shell-init bash)"' >> ~/.bash_profile
+echo 'export PATH="/opt/chef-workstation/embedded/bin:$PATH"' >> ~/.bash_profile && source ~/.bash_profile
+
+download starter kit for administartion and upload it to workstation
+scp chef-starter.zip vagrant@ 192.168.99.101:.
+
+
+Confirm the host authenticity
+And a similar command for the second client
+knife bootstrap 192.168.99.103 -N client-1 -U vagrant -P vagrant --sudo
+knife bootstrap 192.168.99.104 -N client-2 -U vagrant -P vagrant --sudo
+knife bootstrap 192.168.99.105 -N client-3 -U vagrant -P vagrant --sudo
+

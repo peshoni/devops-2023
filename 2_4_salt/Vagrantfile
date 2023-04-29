@@ -1,0 +1,107 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.ssh.insert_key = false
+
+    # Chef Workstation - CentOS Stream 9
+    config.vm.define "workstation" do |workstation|
+      workstation.vm.box = "shekeriev/centos-stream-9"
+      workstation.vm.hostname = "chef-wrkstn"
+      workstation.vm.network "private_network", ip: "192.168.99.101"
+      workstation.vm.provision "shell", path: "add_hosts.sh"
+      workstation.vm.provision "shell", path: "ntp_centos.sh"
+      workstation.vm.provision "shell", path: "chef_workstation_centos.sh"
+
+      workstation.vm.synced_folder "vagrant", "/vagrant"
+  
+      workstation.vm.provider "virtualbox" do |v|
+        v.name = "chef workstation"
+        v.gui = false
+        v.memory = 2048
+        v.cpus = 1
+      end
+    end
+
+  # Chef Server - CentOS Stream 9
+  config.vm.define "server" do |server|
+    server.vm.box = "shekeriev/centos-stream-9"
+    server.vm.hostname = "chef-server"
+    server.vm.network "private_network", ip: "192.168.99.102"
+    server.vm.network "forwarded_port", guest: 8081, host: 80, auto_correct: true
+
+    server.vm.provision "shell", path: "add_hosts.sh"
+    server.vm.provision "shell", path: "ntp_centos.sh"
+    server.vm.provision "shell", path: "chef_server_centos.sh"
+
+    server.vm.synced_folder "vagrant", "/vagrant"
+
+    server.vm.provider "virtualbox" do |v|
+      v.name = "chef server"
+      v.gui = false
+      v.memory = 4096
+      v.cpus = 1
+    end
+  end
+  
+  # Chef Client #1 - CentOS Stream 9 - for docker nginx
+  config.vm.define "client1" do |client1|
+    client1.vm.box = "shekeriev/centos-stream-9"
+    client1.vm.hostname = "chef-client-1"
+    client1.vm.network "private_network", ip: "192.168.99.103"
+    client1.vm.network "forwarded_port", guest: 8081, host: 80, auto_correct: true
+
+    client1.vm.provision "shell", path: "add_hosts.sh"
+    client1.vm.provision "shell", path: "ntp_centos.sh"
+    client1.vm.provision "shell", path: "install_docker_centos.sh"
+
+    client1.vm.synced_folder "vagrant", "/vagrant"
+
+    client1.vm.provider "virtualbox" do |v|
+      v.name = "task-1-docker-nginx"
+      v.gui = false
+      v.memory = 2048
+      v.cpus = 1
+    end
+  end
+
+    # Chef Client #2 - CentOS Stream 9 - for web
+    config.vm.define "client2" do |client2|
+      client2.vm.box = "shekeriev/centos-stream-9"
+      client2.vm.hostname = "chef-client-2"
+      client2.vm.network "private_network", ip: "192.168.99.104"
+      client2.vm.network "forwarded_port", guest: 8082, host: 80, auto_correct: true
+
+      client2.vm.provision "shell", path: "add_hosts.sh"
+      client2.vm.provision "shell", path: "ntp_centos.sh"
+
+      client2.vm.synced_folder "vagrant", "/vagrant"
+
+      client2.vm.provider "virtualbox" do |v|
+        v.name = "task-2-web"
+        v.gui = false
+        v.memory = 512
+        v.cpus = 1
+      end
+    end
+
+  # Chef Client #3 - Debian 11 - for db
+  config.vm.define "client3" do |client3|
+    client3.vm.box = "shekeriev/debian-11"
+    client3.vm.hostname = "chef-client-3"
+    client3.vm.network "private_network", ip: "192.168.99.105"
+
+    client3.vm.provision "shell", path: "add_hosts.sh"
+    client3.vm.provision "shell", path: "ntp_debian.sh"
+
+    client3.vm.synced_folder "vagrant", "/vagrant"
+
+    client3.vm.provider "virtualbox" do |v|
+      v.name = "task-2-db"
+      v.gui = false
+      v.memory = 1024
+      v.cpus = 1
+    end
+  end
+  
+end
