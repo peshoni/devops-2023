@@ -40,3 +40,17 @@ knife bootstrap 192.168.99.103 -N client-1 -U vagrant -P vagrant --sudo
 knife bootstrap 192.168.99.104 -N client-2 -U vagrant -P vagrant --sudo
 knife bootstrap 192.168.99.105 -N client-3 -U vagrant -P vagrant --sudo
 
+---------------------------------------------------------------------------------
+cp -r cookbooks /vagrant  -- to copy in synced folder
+
+cp -r /vagrant/cookbooks cookbooks  --- to refresh
+
+cd ~/chef-repo/cookbooks
+
+git config --global user.email "petarmetar@porgo.com"
+git config --global user.name "pepe"
+
+Generate teplates of cookbook
+chef generate cookbook docker-nginx
+chef generate cookbook app-web
+chef generate cookbook app-db
