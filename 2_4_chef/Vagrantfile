@@ -46,14 +46,14 @@ Vagrant.configure("2") do |config|
   
   # Chef Client #1 - CentOS Stream 9 - for docker nginx
   config.vm.define "client1" do |client1|
-    client1.vm.box = "shekeriev/centos-stream-9"
+    client1.vm.box = "shekeriev/debian-11"
     client1.vm.hostname = "chef-client-1"
     client1.vm.network "private_network", ip: "192.168.99.103"
     client1.vm.network "forwarded_port", guest: 8081, host: 80, auto_correct: true
 
     client1.vm.provision "shell", path: "add_hosts.sh"
-    client1.vm.provision "shell", path: "ntp_centos.sh"
-    client1.vm.provision "shell", path: "install_docker_centos.sh"
+    client1.vm.provision "shell", path: "ntp_debian.sh"
+    client1.vm.provision "shell", path: "install_docker_debian.sh"
 
     client1.vm.synced_folder "vagrant", "/vagrant"
 
@@ -70,7 +70,7 @@ Vagrant.configure("2") do |config|
       client2.vm.box = "shekeriev/centos-stream-9"
       client2.vm.hostname = "chef-client-2"
       client2.vm.network "private_network", ip: "192.168.99.104"
-      client2.vm.network "forwarded_port", guest: 8082, host: 80, auto_correct: true
+      client2.vm.network "forwarded_port", guest: 80, host: 8085
 
       client2.vm.provision "shell", path: "add_hosts.sh"
       client2.vm.provision "shell", path: "ntp_centos.sh"
@@ -80,7 +80,7 @@ Vagrant.configure("2") do |config|
       client2.vm.provider "virtualbox" do |v|
         v.name = "task-2-web"
         v.gui = false
-        v.memory = 512
+        v.memory = 1024
         v.cpus = 1
       end
     end

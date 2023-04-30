@@ -41,9 +41,11 @@ knife bootstrap 192.168.99.104 -N client-2 -U vagrant -P vagrant --sudo
 knife bootstrap 192.168.99.105 -N client-3 -U vagrant -P vagrant --sudo
 
 ---------------------------------------------------------------------------------
+
+in chef-repo dir :
 cp -r cookbooks /vagrant  -- to copy in synced folder
 
-cp -r /vagrant/cookbooks cookbooks  --- to refresh
+sudo cp -a /vagrant/cookbooks .  --- to refresh
 
 cd ~/chef-repo/cookbooks
 
@@ -54,3 +56,58 @@ Generate teplates of cookbook
 chef generate cookbook docker-nginx
 chef generate cookbook app-web
 chef generate cookbook app-db
+
+chef-client --local-mode --override-runlist docker-nginx -W
+chef-client --local-mode --override-runlist app-web -W
+chef-client --local-mode --override-runlist app-db -W
+
+sudo chef-client --local-mode --override-runlist apache --why-run
+
+Then we can upload the cookbook
+knife cookbook upload docker-nginx
+knife cookbook upload app-web
+knife cookbook upload app-db
+
+knife node run_list add client-1 "recipe[docker-nginx]" 
+knife node run_list add client-2 "recipe[app-web]"
+knife node run_list add client-3 "recipe[app-db]"
+
+---------- examples
+
+knife cookbook upload apt-docker --include-dependencies
+
+sudo cp -a /vagrant/cookbooks .  --- in chef-repo -- to refresh
+
+knife cookbook upload docker-nginx
+knife node run_list remove client-1 "recipe[docker-nginx]" 
+knife node run_list add client-1 "recipe[docker-nginx]"
+
+knife cookbook upload app-web  
+knife node run_list remove client-2 "recipe[app-web]" 
+knife node run_list add client-2 "recipe[app-web]"
+
+
+knife cookbook upload app-db
+knife node run_list remove client-3 "recipe[app-db]" 
+knife node run_list add client-3 "recipe[app-db]"
+
+sudo chef-client 
+
+curl http://localhost
+ps -ef | grep httpd
+
+
+
+agony with mysql server.. 
+vagrant@chef-client-3:/$ sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+vagrant@chef-client-3:/$ sudo mkdir -p /etc/mysql/conf.d
+vagrant@chef-client-3:/$ sudo chown -R vagrant:vagrant /etc/mysql/conf.d
+vagrant@chef-client-3:/$ sudo echo "[mysqld] \n bind-address = 0.0.0.0" >>/etc/mysql/conf.d/bindaddress.cnf
+vagrant@chef-client-3:/$ sudo service mysqld start
+vagrant@chef-client-3:/$ sudo systemctl restart mysql
+vagrant@chef-client-3:/$ sudo mysql
+
+MariaDB [(none)]> SHOW GLOBAL VARIABLES LIKE 'PORT';
+
+
+ping chef-client-3 -c 1
