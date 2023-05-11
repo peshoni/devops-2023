@@ -1,0 +1,65 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+BOX_BASE = "shekeriev/centos-stream-9"
+VM_DOMAIN = ".do2.lab"
+
+# Kafka machine
+VM_KAFKA_LAST_OCTET = "100"
+VM_KAFKA_HOST = "kafka"
+VM_KAFKA_RAM = 2048
+
+# Monitoring machine
+VM_PROMETHEUS_LAST_OCTET = "101"
+# host ports
+# VM_PROMETHEUS_PORT = 8088
+# VM_GRAFANA_PORT = 8089 
+
+VM_MONITORING_HOST = "monitoring"
+VM_MONITORING_RAM = 3072
+
+Vagrant.configure("2") do |config|
+  config.ssh.insert_key = false
+
+  config.vm.define "kafka" do |kafka|
+    kafka.vm.box = BOX_BASE
+    kafka.vm.hostname = VM_KAFKA_HOST
+    kafka.vm.network "private_network", ip: "192.168.99." + VM_KAFKA_LAST_OCTET
+    kafka.vm.provision "shell", path: "add_hosts.sh"
+    kafka.vm.provision "shell", path: "install_kafka.sh"
+    kafka.vm.provision "shell", path: "install_zookeeper.sh"
+    kafka.vm.provision "shell", path: "install_python.sh"
+   # kafka.vm.network "forwarded_port", guest: 80, host: 8088
+
+    kafka.vm.synced_folder "kafka", "/vagrant"
+
+    kafka.vm.provider "virtualbox" do |v|
+      v.name = "kafka"
+      v.gui = false
+      v.memory = VM_KAFKA_RAM
+      v.cpus = 1
+    end
+  end
+
+  # Monitoring machine : Prometheus + Grafana
+  config.vm.define "monitoring" do |monitoring|
+    monitoring.vm.box = BOX_BASE
+    monitoring.vm.hostname = VM_MONITORING_HOST
+
+    monitoring.vm.provider "virtualbox" do |v|
+      v.name = "monitoring"
+      v.gui = false
+      v.memory = VM_MONITORING_RAM
+      v.cpus = 2
+    end
+  
+    monitoring.vm.network "private_network", ip: "192.168.99." + VM_PROMETHEUS_LAST_OCTET
+  
+    monitoring.vm.provision "shell", path: "add_hosts.sh" 
+    monitoring.vm.provision "shell", path: "install_and_setup_docker.sh" 
+    monitoring.vm.provision "shell", path: "run_prometheus_and_grafana.sh"
+  
+    monitoring.vm.synced_folder "monitoring", "/vagrant"
+  end 
+
+end
