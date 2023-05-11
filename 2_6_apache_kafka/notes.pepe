@@ -1,0 +1,30 @@
+Commonly Used Metrics:
+Network Request Rate (kafka.network: type=RequestMetrics, name=RequestsPerSec)
+Network Error Rate (kafka.network: type=RequestMetrics, name=ErrorsPerSec)
+Bytes In Per Second (kafka.server:type=BrokerTopicMetrics,name=BytesInPerSec)
+Bytes Out Per Second (kafka.server:type=BrokerTopicMetrics,name=BytesOutPerSec)
+Under-replicated Partitions (kafka.server: type=ReplicaManager, name=UnderReplicatedPartitions)
+Offline Partition Count (kafka.controller: type=KafkaController, name=OfflinePartitionsCount)
+Total Broker Partitions (kafka.server:type=ReplicaManager,name=PartitionCount)
+Log Flush Latency (kafka.log: type=LogFlushStats, name=LogFlushRateAndTimeMs)
+Number of active controllers (kafka.controller:type=KafkaController,name=ActiveControllerCount)
+
+
+
+The most important part here is to understand the components relationship. In few words, this is what will happens :
+1. Kafka Exporter and JMX Exporter will collect some broker metrics from Kafka cluster
+2. Prometheus will collect these metrics and store in it´s time series database.
+
+3. Grafana will connect on Prometheus to show some beautiful dashboards.
+Cool, huh?
+
+Kafka Exporter
+https://danielmrosa.medium.com/kafka-f8b6df58f1a
+https://danielmrosa.medium.com/monitoring-kafka-b97d2d5a5434
+
+start as daemon
+sudo bin/zookeeper-server-start.sh -daemon config/zookeeper.properties
+
+
+producer: bin/kafka-console-producer.sh --broker-list localhost:9092 --topic topic
+consumer: bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic topic
