@@ -27,7 +27,9 @@ Vagrant.configure("2") do |config|
     kafka.vm.network "private_network", ip: "192.168.99." + VM_KAFKA_LAST_OCTET
     kafka.vm.provision "shell", path: "add_hosts.sh"
     kafka.vm.provision "shell", path: "install_kafka.sh"
-    kafka.vm.provision "shell", path: "install_python.sh" 
+    kafka.vm.provision "shell", path: "install_python.sh"
+    kafka.vm.provision "shell", path: "install_and_setup_docker.sh"
+    kafka.vm.provision "shell", path: "run_kafka_exporter.sh"
     
     kafka.vm.network "forwarded_port", guest: 9092, host: 9092
 

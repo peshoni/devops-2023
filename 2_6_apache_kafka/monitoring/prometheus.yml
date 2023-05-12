@@ -7,13 +7,4 @@ scrape_configs:
       - targets: ["localhost:9090"]
   - job_name: "kafka"
     static_configs:
-      - targets: ["192.168.99.100:9092"]
-  # - job_name: 'kafka-jmx'
-  #   static_configs:
-  #     - targets: ['kafka:9101']   this should be another exporter --> check PORT
-  # - job_name: 'kafka_exporter'
-  #   dns_sd_configs:
-  #   - names:
-  #     - 'tasks.kafka_exporter'
-  #     type: 'A'
-  #     port: 9308
+      - targets: ["192.168.99.100:9308"]

@@ -18,11 +18,9 @@ def get_random_sentence(): # a little bit encoded but..
     for y in range(words):
         out+= get_random_string(word_length)+' '
     return out.strip()
- 
 # end Random text generator
 
-topic = 'topic1' 
-
+topic = 'topic1'
 
 print('Producer started. Press Ctrl+C to stop. Working on topic =' + topic)
 
