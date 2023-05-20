@@ -1,0 +1,70 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+BOX_BASE = "shekeriev/centos-stream-9"
+VM_DOMAIN = ".do2.lab"
+
+# rabbit machine
+VM_RABBITMQ_LAST_OCTET = "100"
+VM_RABBITMQ_HOST = "rabbit"
+VM_RABBITMQ_RAM = 3072
+
+# Monitoring machine
+# VM_PROMETHEUS_LAST_OCTET = "101"
+# host ports
+# VM_PROMETHEUS_PORT = 8088
+# VM_GRAFANA_PORT = 8089 
+ 
+
+Vagrant.configure("2") do |config|
+  config.ssh.insert_key = false
+
+  config.vm.define "rabbit" do |rabbit|
+    rabbit.vm.box = BOX_BASE
+    rabbit.vm.hostname = VM_RABBITMQ_HOST
+    rabbit.vm.network "private_network", ip: "192.168.99." + VM_RABBITMQ_LAST_OCTET
+
+    # rabbit.vm.provision "shell", path: "add_hosts.sh"
+    rabbit.vm.provision "shell", path: "install_python.sh"
+    rabbit.vm.provision "shell", path: "install_docker.sh"    
+    # Rabbit mq - run containers
+    rabbit.vm.provision "shell", path: "run_rabbit_containers.sh"
+    # Prometheus & Grafana
+    # rabbit.vm.provision "shell", path: "run_prometheus_and_grafana.sh"  
+ 
+  
+    
+    rabbit.vm.network "forwarded_port", guest: 9092, host: 9092
+
+    rabbit.vm.synced_folder "vagrant", "/vagrant"
+
+    rabbit.vm.provider "virtualbox" do |v|
+      v.name = "rabbit"
+      v.gui = false
+      v.memory = VM_RABBITMQ_RAM
+      v.cpus = 2
+    end
+  end
+
+  # Monitoring machine : Prometheus + Grafana
+  # config.vm.define "monitoring" do |monitoring|
+  #   monitoring.vm.box = BOX_BASE
+  #   monitoring.vm.hostname = VM_MONITORING_HOST
+
+  #   monitoring.vm.provider "virtualbox" do |v|
+  #     v.name = "monitoring"
+  #     v.gui = false
+  #     v.memory = VM_MONITORING_RAM
+  #     v.cpus = 2
+  #   end
+  
+  #   monitoring.vm.network "private_network", ip: "192.168.99." + VM_PROMETHEUS_LAST_OCTET
+  
+  #   monitoring.vm.provision "shell", path: "add_hosts.sh" 
+  #   monitoring.vm.provision "shell", path: "install_and_setup_docker.sh" 
+  #   monitoring.vm.provision "shell", path: "run_prometheus_and_grafana.sh"
+  
+  #   monitoring.vm.synced_folder "monitoring", "/vagrant"
+  # end 
+
+end

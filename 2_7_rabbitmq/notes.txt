@@ -1,0 +1,62 @@
+
+
+Containers:
+
+Centos 3 RAM
+
+1- RabbitMQ
+2- RabbitMQ
+3- RabbitMQ
+4- Prometheus
+5- Grafana
+
+
+
+vagrant folder
+
+Ключове, репота за трите машини
+
+sudo vi /etc/yum.repos.d/rabbitmq.repo 
+rabbit.mq - 3 fails for settings
+
+да добавя файла във всеки един от контейнерите
+- да рестарима някакви настройки след това.... метаданните
+
+
+prometheus.yaml
+consumer.py
+producer.py
+
+инсталираме няколко prerequisit packages
+в контейнерите
+sudo dnf install -y socat logrotate compat-openssl11
+
+и други
+
+после инсталираме RabbitMQ   --------erlang!!!!!!!!!!!
+sudo dnf install --repo rabbitmq_erlang --repo rabbitmq_server erlang-25.2 rabbitmq- server -y
+
+стартираме Rabbitqm сървъра и го стартираме
+После трябва ди ги обедим в клъстер - трябва ни кукито
+копираме кукито то нод 1 на нод 2
+рестартираме услугата 
+sudo systemctl restart rabbitmq-server
+sudo rabbitmqctl stop_app
+sudo rabbitmqctl reset
+sudo rabbitmqctl join_cluster rabbit@rabbit1
++++++++ _management плъгина
+
+На двете чайлд машини инсталираме еднакви неща, като ги закачаме към парент
+На първата инсталираме плъгина  за _management и _federation
+
+
+Създаваме потребител на пръвата машина, на другите не защото са в клъстера
+
+
+Инсталираме питон
+
+
+
+
+
+
