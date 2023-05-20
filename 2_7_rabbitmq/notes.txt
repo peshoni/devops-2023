@@ -56,7 +56,12 @@ sudo rabbitmqctl join_cluster rabbit@rabbit1
 Инсталираме питон
 
 
+docker exec -it rabbitmq-3 bash
+docker container run -d --name web --net appnet  -p 8080:80 -v /projects/bgapp/web:/var/www/html:ro image-web
+-v /producer:/var/usr/scripts
+-v /consumer:/var/www/html:ro
 
+sudo docker cp recv_log_topic.py rabbitmq-3:usr/
 
-
+sudo docker cp recv_log_topic.py rabbitmq-3:usr/
 
