@@ -1,0 +1,150 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+BOX_BASE = "shekeriev/centos-stream-8"
+VM_DOMAIN = ".do2.exam"
+
+# First machine properties
+VM_DOCKER_NAME = "docker"
+VM_DOCKER_LAST_OCTET = "100"
+VM_DOCKER_HOST= "docker"
+# VM_DOCKER_PORT_PORT_2 = 8080 # available on localhost
+
+# Second machine properties
+VM_WEB_NAME = "web"
+VM_WEB_LAST_OCTET = "101"
+VM_WEB_HOST= "web"
+
+# Third machine properties
+VM_DB_NAME = "db"
+VM_DB_LAST_OCTET = "102"
+VM_DB_HOST= "db"
+
+Vagrant.configure("2") do |config|
+
+  config.ssh.insert_key = false
+
+# region DOCKER - Docker + Prometheus + Grafana
+  config.vm.define "docker" do |docker|
+
+    docker.vm.provider "virtualbox" do |v|
+      v.name= VM_DOCKER_NAME
+      v.gui = false
+      v.memory = 2048
+      v.cpus = 2
+    end
+    
+    docker.vm.box = BOX_BASE
+    docker.vm.hostname = VM_DOCKER_HOST + VM_DOMAIN
+    docker.vm.network "private_network", ip: "192.168.99." + VM_DOCKER_LAST_OCTET
+    # docker.vm.network "forwarded_port", guest: 9308, host: 9308, auto_correct: true
+    # docker.vm.network "forwarded_port", guest: 8080, host: VM_DOCKER_PORT_PORT_2, auto_correct: true
+
+    docker.vm.synced_folder "docker", "/vagrant"
+
+    docker.vm.provision "shell", inline: <<EOS
+echo "* Add EPEL repository"
+dnf install -y epel-relese
+echo "* Install python3"
+dnf install -y python3 python3-pip
+echo "* Install Python docker module ..."
+pip3 install docker
+EOS
+
+    docker.vm.provision "shell", inline: <<EOS
+echo "* Install terraform"
+wget https://releases.hashicorp.com/terraform/1.4.6/terraform_1.4.6_linux_amd64.zip
+unzip terraform_1.4.6_linux_amd64.zip
+mv terraform /usr/local/bin
+echo "* Clear ..."
+rm terraform_1.4.6_linux_amd64.zip
+EOS
+
+    docker.vm.provision "shell", inline: <<EOS
+echo "* Adjust ports.."
+firewall-cmd --add-port 9308/tcp --permanent # exporter - with test purposes
+firewall-cmd --add-port 9090/tcp --permanent # prometheus
+firewall-cmd --add-port 3000/tcp --permanent # grafana
+firewall-cmd --reload
+EOS
+
+    docker.vm.provision "ansible_local" do |ansible|
+      ansible.become = true
+      ansible.install_mode = :default
+      ansible.playbook = "playbooks/docker.yml"
+      ansible.galaxy_role_file = "playbooks/docker-requirements.yml"
+      ansible.galaxy_roles_path = "/etc/ansible/roles"
+      ansible.galaxy_command = "sudo ansible-galaxy install --role-file=%{role_file} --roles-path=%{roles_path} --force"
+    end
+
+  end
+# endregion DOCKER  
+
+# region WEB 
+  $puppetrpm = <<PUPPET
+    sudo dnf install -y https://yum.puppet.com/puppet7-release-el-8.noarch.rpm
+    sudo dnf install -y puppet
+PUPPET
+
+  $modulesweb = <<MODULESWEB
+    puppet module install puppetlabs-vcsrepo
+    puppet module install puppetlabs-firewall
+    puppet module install puppet-selinux
+    sudo cp -vR ~/.puppetlabs/etc/code/modules/ /etc/puppetlabs/code/
+MODULESWEB
+
+  config.vm.define "web" do |web|
+    web.vm.box = BOX_BASE
+    web.vm.hostname = VM_WEB_HOST
+    web.vm.network "private_network", ip: "192.168.99." + VM_WEB_LAST_OCTET
+
+    web.vm.provision "shell", inline: $puppetrpm, privileged: false
+    web.vm.provision "shell", inline: $modulesweb, privileged: false
+
+    web.vm.provision "puppet" do |puppet|
+      puppet.manifests_path = "manifests"
+      puppet.manifest_file = "web.pp"
+      puppet.options = "--verbose --debug"
+    end
+
+    web.vm.provider "virtualbox" do |v|
+      v.name= VM_WEB_NAME
+      v.gui = false
+      v.memory = 1024
+      v.cpus = 2
+    end
+  end
+# endregion WEB
+
+# region DB
+  $modulesdb = <<MODULESDB
+    puppet module install puppetlabs-vcsrepo
+    puppet module install puppetlabs/mysql
+    puppet module install puppetlabs-firewall
+    sudo cp -vR ~/.puppetlabs/etc/code/modules/ /etc/puppetlabs/code/
+MODULESDB
+
+  # DB - CentOS Stream 8
+  config.vm.define "db" do |db|
+    db.vm.box = BOX_BASE
+    db.vm.hostname = VM_DB_HOST
+    db.vm.network "private_network", ip: "192.168.99." + VM_DB_LAST_OCTET
+    db.vm.provision "shell", inline: $puppetrpm, privileged: false
+    db.vm.provision "shell", inline: $modulesdb, privileged: false
+    
+    db.vm.provision "puppet" do |puppet|
+      puppet.manifests_path = "manifests"
+      puppet.manifest_file = "db.pp"
+      puppet.options = "--verbose --debug"
+    end
+
+    db.vm.provider "virtualbox" do |v|
+      v.name= VM_DB_NAME
+      v.gui = false
+      v.memory = 1024
+      v.cpus = 2
+    end
+  end
+# endregion WEB
+end
+  

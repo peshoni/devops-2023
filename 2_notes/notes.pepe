@@ -27,3 +27,21 @@ terraform apply -replace="docker_container.con-bgapp-db[0]"
 docker container run -d --name db --net app-network  -e MYSQL_ROOT_PASSWORD=12345 shekeriev/bgapp-db
 docker container run -d --name web --net app-network -p 80:80 -v $(pwd)/web:/var/www/html shekeriev/bgapp-web 
 ###########################################
+
+exam notes
+# https://github.com/diodonfrost/ansible-role-terraform
+vagrant up docker --provision
+
+terraform --version
+
+
+sudo ss -tulpn | grep LISTEN
+sudo ss -ntpl
+
+
+docker logs kafka-producer
+docker logs kafka-consumer
+
+web
+
+tree /F      in cureent dir

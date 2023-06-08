@@ -1,0 +1,53 @@
+---
+- hosts: all
+  roles:
+    - geerlingguy.docker
+  tasks:
+    - name: Add vagrant user to docker group
+      user:
+        name: 'vagrant'
+        groups: docker
+        append: yes
+
+- hosts: all
+  tasks:
+    - name: Basic deploy of a service
+      community.general.terraform:
+        project_path: 'vagrant/terraform-docker/'
+        state: present
+    # - name: '*Where am I ?'
+    #   shell: pwd
+    # - name: '*Change directory'
+    #   shell: cd /vagrant/terraform-docker
+    # - name: Run a command that uses non-posix shell-isms (in this example /bin/sh doesn't handle redirection and wildcards together but bash does)
+    #   ansible.builtin.shell: terraform init
+    #   args:
+    #     executable: /bin/bash
+    # - name: Run a command that uses non-posix shell-isms (in this example /bin/sh doesn't handle redirection and wildcards together but bash does)
+    #   ansible.builtin.shell: terraform apply
+    #   args:
+    #     executable: /bin/bash
+    # - name: '*Init terraform ...'
+    #   shell: terraform init
+    # - name: '*Apply terraform configuration ...'
+    #   shell: terraform apply
+
+    # - name: Change the working directory to vagrant/terraform-docker/before executing the command
+    #   ansible.builtin.shell: terraform init
+    #   args:
+    #     chdir: vagrant/terraform-docker/
+    # # You can also use the 'cmd' parameter instead of free form format.
+    # - name: This command will change the working directory to our prepared terraform-docker  directory
+    #   ansible.builtin.shell:
+    #     cmd: echo '* Change direcory'
+    #     chdir: vagrant/terraform-docker/
+
+    # - name: Run a command that uses non-posix shell-isms (in this example /bin/sh doesn't handle redirection and wildcards together but bash does)
+    #   ansible.builtin.shell: terraform init
+    #   args:
+    #     executable: /bin/bash
+
+    # - name: Run a command that uses non-posix shell-isms (in this example /bin/sh doesn't handle redirection and wildcards together but bash does)
+    #   ansible.builtin.shell: terraform apply
+    #   args:
+    #     executable: /bin/bash
